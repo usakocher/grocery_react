@@ -82,7 +82,7 @@ export const Home = (props:Props) => {
                             <a href="/partners" className={classes.nav_a}>Partners</a>
                         </li>
                         <li>
-                            <a href="/dashboard" className={classes.nav_a}>About</a>
+                            <a href="/dashboard" className={classes.nav_a}>Dashboard</a>
                         </li>
                         <li>
                             <a href="/signin" className={classes.nav_a}><AccountCircleIcon /></a>
