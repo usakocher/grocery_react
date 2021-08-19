@@ -13,7 +13,12 @@ import { Drawer as MUIDrawer,
     IconButton,
     Typography,
     Divider,
-    Button
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle
 } from '@material-ui/core';
 import groceries_image from '../../assets/images/Stocksy_comp_603819.jpg';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -22,7 +27,8 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import clsx from 'clsx';
 import { RouteComponentProps, withRouter, Switch, Route } from "react-router-dom";
-import { DataTable } from '../../components'
+import { DataTable } from '../../components';
+import { GroceryForm } from '../GroceryForm';
 
 const drawerWidth = 240;
 
@@ -30,13 +36,13 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             display: 'flex',
-            // backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${groceries_image});`,
-            // width: '100%',
-            // height: '100%',
-            // backgroundSize: 'cover',
-            // backgroundRepeat: 'no-repeat',
-            // backgroundPosition: 'center',
-            // position: 'absolute',
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${groceries_image});`,
+            width: '100%',
+            height: '100%',
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            position: 'absolute',
         },
         appBar: {
             transition: theme.transitions.create(['margin', 'width'], {
@@ -110,11 +116,18 @@ export const Dashboard = withRouter(( props:DashProps ) => {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
     const handleDrawerOpen = () => {
         setOpen(true);
     };
     const handleDrawerClose = () => {
         setOpen(false);
+    };
+    const handleDialogClickOpen = () => {
+        setDialogOpen(true);
+    };
+    const handleDialogClickClose = () => {
+        setDialogOpen(false);
     };
     const itemsList = [
         {
@@ -153,7 +166,17 @@ export const Dashboard = withRouter(( props:DashProps ) => {
                 <Typography variant="h6" noWrap>
                     Dashboard
                 </Typography>
-                <Button className={classes.toolbar_button}>Create New Drone</Button>
+                <Button className={classes.toolbar_button} onClick={handleDialogClickOpen}>Create New Item</Button>
+                <Dialog open={dialogOpen} onClose={handleDialogClickClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Add New Item</DialogTitle>
+                    <DialogContent>
+                        <GroceryForm />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick = {handleDialogClickClose} color="secondary">Cancel</Button>
+                        <Button type='submit' color="primary">Submit</Button>
+                    </DialogActions>
+                </Dialog>
             </Toolbar>
             </AppBar>
             <MUIDrawer
