@@ -29,6 +29,7 @@ import clsx from 'clsx';
 import { RouteComponentProps, withRouter, Switch, Route } from "react-router-dom";
 import { DataTable } from '../../components';
 import { GroceryForm } from '../GroceryForm';
+import { useAuth } from 'reactfire';
 
 const drawerWidth = 240;
 
@@ -117,6 +118,7 @@ export const Dashboard = withRouter(( props:DashProps ) => {
     const theme = useTheme();
     const [open, setOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const auth = useAuth();
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -139,8 +141,11 @@ export const Dashboard = withRouter(( props:DashProps ) => {
             onClick: () => history.push('/partners')
         },
         {
-            text: 'Sign In',
-            onClick: () => history.push('/signin')
+            text: 'Sign Out',
+            onClick: async () => {
+                await auth.signOut();
+                history.push('/')
+            }
         }
     ]
 
@@ -174,7 +179,6 @@ export const Dashboard = withRouter(( props:DashProps ) => {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick = {handleDialogClickClose} color="secondary">Cancel</Button>
-                        <Button type='submit' color="primary">Submit</Button>
                     </DialogActions>
                 </Dialog>
             </Toolbar>

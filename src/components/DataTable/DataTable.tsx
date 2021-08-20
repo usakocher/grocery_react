@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@material-ui/data-grid';
+import { DataGrid, GridColDef, GridRowModel, GridValueGetterParams } from '@material-ui/data-grid';
 import { server_calls } from '../../api';
 import { useGetData } from '../../custom-hooks';
 import { 
@@ -10,27 +10,19 @@ import {
     DialogContentText,
     DialogTitle} from '@material-ui/core';
 import { GroceryForm } from '../GroceryForm';
-import { string } from 'yargs';
-
 interface gridData{
-    data:{
-        id?:string;
-    }
+    id?:string;
 }
-
-// const seller = useSelector<GroceryState>(state => state.seller)
-// const description = useSelector<GroceryState>(state => state.description)
-// const size = useSelector<GroceryState>(state => state.size)
-// const unit = useSelector<GroceryState>(state => state.unit)
-// const price = useSelector<GroceryState>(state => state.price)
-// const countryOrigin = useSelector<GroceryState>(state => state.countryOrigin)
-// const { register, handleSubmit } = useForm({ })
 
 const columns: GridColDef[] = [
     {
-        field: 'id',
-        headerName: 'Prod ID',
-        width: 130
+        field: 'productId',
+        hide: true
+    },
+    {
+        field: 'productName',
+        headerName: 'Name',
+        width: 180
     },
     {
         field: 'seller',
@@ -40,7 +32,7 @@ const columns: GridColDef[] = [
     {
         field: 'description',
         headerName: 'Description',
-        width: 280
+        width: 250
     },
     {
         field: 'size',
@@ -67,7 +59,7 @@ const columns: GridColDef[] = [
 export const DataTable= () => {
     let { groceryData, getData } = useGetData();
     let [open, setOpen] = useState(false);
-    let [gridData, setData] = useState({ })
+    let [gridData, setData] = useState<gridData>({id: '' })
 
     let handleOpen = () => {
         setOpen(true)
@@ -75,17 +67,39 @@ export const DataTable= () => {
 
     let handleClose = () => {
         setOpen(false)
+        getData()
     }
 
-    const rows = [
-        { id: 1, seller: "Adam's Farm", description: 'Organic Non-Gmo Carrots', size: '1', unit: 'pound', price: 4.87, countryOrigin: 'Murica' }
-    ];
+    let deleteData = () => {
+        server_calls.delete(gridData.id!)
+        getData()
+    };
+
+    let handleCheckbox = (id:GridRowModel) => {
+        if(id[0]===undefined){
+            setData({id:''})
+        }else{
+            setData({id:id[0].toString()})
+        }
+    }
 
     return (
-        <div style={{ height: 375, width: '65%', margin: 'auto', color: 'white'}}>
+        <div style={{ height: 375, width: '90%', margin: 'auto', color: 'white'}}>
             <h1> Groceries in Inventory </h1>
-            <DataGrid rows={rows} columns={columns} pageSize={5} style={{ backgroundColor: 'white' }} checkboxSelection/>
+            <DataGrid rows={groceryData} columns={columns} pageSize={5} style={{ backgroundColor: 'white' }} checkboxSelection onSelectionModelChange={handleCheckbox}/>
             {console.log(gridData)}
+            <Button onClick={handleOpen} style={{backgroundColor:'blue', color:'white'}}>Update</Button>
+            <Button variant="contained" color="secondary" onClick={deleteData}>Delete</Button>
+            <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
+                <DialogTitle>Update Item</DialogTitle>
+                <DialogContent>
+                    <GroceryForm id={gridData.id!}/>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color='primary'>Cancel</Button>
+                    <Button onClick={handleClose} color='primary'>Done</Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }

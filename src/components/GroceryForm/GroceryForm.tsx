@@ -1,6 +1,6 @@
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { useForm } from 'react-hook-form';
-import { chooseSeller, chooseDescription, chooseSize, chooseUnit, choosePrice, chooseCountryOrigin } from '../../redux/slices/rootSlice';
+import { chooseSeller, chooseProductName, chooseDescription, chooseSize, chooseUnit, choosePrice, chooseCountryOrigin } from '../../redux/slices/rootSlice';
 import { Input } from '../sharedComponents/Input';
 import { Button } from '@material-ui/core';
 
@@ -15,6 +15,7 @@ interface GroceryFormProps {
 
 interface GroceryState {
     seller: string;
+    productName: string;
     description: string;
     size: string;
     unit: string;
@@ -23,10 +24,12 @@ interface GroceryState {
 }
 
 export const GroceryForm = (props: GroceryFormProps) => {
+    console.log(props.id)
     const dispatch = useDispatch();
     let { groceryData, getData } = useGetData();
-    const store = useStore()
+    const store = useStore();
     const seller = useSelector<GroceryState>(state => state.seller)
+    const productName = useSelector<GroceryState>(state => state.productName)
     const description = useSelector<GroceryState>(state => state.description)
     const size = useSelector<GroceryState>(state => state.size)
     const unit = useSelector<GroceryState>(state => state.unit)
@@ -40,12 +43,17 @@ export const GroceryForm = (props: GroceryFormProps) => {
         if( props.id!){
             server_calls.update(props.id!, data)
             console.log(`Updated:${data} ${props.id}`)
-            window.location.reload()
             event.target.reset();
         } else {
             dispatch(chooseSeller(data.seller))
-            server_calls.create(store.getState())
-            window.location.reload()
+            dispatch(chooseProductName(data.productName))
+            dispatch(chooseDescription(data.description))
+            dispatch(chooseSize(data.size))
+            dispatch(chooseUnit(data.unit))
+            dispatch(choosePrice(data.price))
+            dispatch(chooseCountryOrigin(data.countryOrigin))
+            console.log(data)
+            server_calls.create(data)
         }
     }
 
@@ -55,6 +63,10 @@ export const GroceryForm = (props: GroceryFormProps) => {
                 <div>
                     <label htmlFor="seller">Seller</label>
                     <Input {...register('seller')} name="seller" placeholder='Seller' />
+                </div>
+                <div>
+                    <label htmlFor="productName">Product</label>
+                    <Input {...register('productName')} name="productName" placeholder='Product' />
                 </div>
                 <div>
                     <label htmlFor="description">Description</label>
@@ -76,6 +88,7 @@ export const GroceryForm = (props: GroceryFormProps) => {
                     <label htmlFor="countryOrigin">Country of Origin</label>
                     <Input {...register('countryOrigin')} name="countryOrigin" placeholder="Country of Origin"/>
                 </div>
+                <Button type='submit'>Submit</Button>
             </form>
         </div>
     )

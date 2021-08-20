@@ -5,6 +5,7 @@ import groceries_image from '../../assets/images/Stocksy_comp_1766526.jpg';
 import '../../styles.css';
 import HomeIcon from '@material-ui/icons/Home';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import { AuthCheck, useAuth } from 'reactfire';
 
 
 const useStyles = makeStyles({
@@ -66,6 +67,11 @@ interface Props{
 
 export const Home = (props:Props) => {
     const classes = useStyles();
+    const auth = useAuth();
+    const sign_out = async () => {
+        await auth.signOut();
+    }
+
     return (
         <div className={`${classes.root} ${classes.fontLink}`}>
             {/*New and Updated HTML Code */}
@@ -81,19 +87,25 @@ export const Home = (props:Props) => {
                         <li>
                             <a href="/partners" className={classes.nav_a}>Partners</a>
                         </li>
+                        <AuthCheck fallback={                            
+                            <li>
+                                <a href="/signin" className={classes.nav_a}>Sign In</a>
+                            </li>
+                        }>
                         <li>
                             <a href="/dashboard" className={classes.nav_a}>Dashboard</a>
                         </li>
                         <li>
-                            <a href="/signin" className={classes.nav_a}><AccountCircleIcon /></a>
+                            <a href="/" className={classes.nav_a} onClick={sign_out}>Sign Out</a>
                         </li>
+                        </AuthCheck>
                     </ul>
                 </div>
             </nav>
             <main className={classes.main}>
                 <div className={classes.main_text}>
                     <h1>{ props.title }</h1>
-                    <p>Helping customers find the products they want at Farmer's Markets</p>
+                    <p>Helping customers find the products they want at local Farmer's Markets</p>
                     <Button color='primary' variant="contained">Click Me</Button>
                 </div>
             </main>
